@@ -1,20 +1,22 @@
 from socket import *
 import re
 import os
+import time
 class ftp_client(object):
 	"""docstring for ftp_client"""
 	BUFSIZE = 4096
 	login_state = False
-	def __init__(self, hostname):
+	def __init__(self, hostname,port=21):
 		super(ftp_client, self).__init__()
 		self.hostname = hostname
-		self.port = 21
+		self.port = int(port)
 		self.data_port = 0
 		self.addr = (self.hostname,self.port)
 		self.client_sock = socket(AF_INET,SOCK_STREAM)
 		self.data_sock = 0
 		self.client_sock.connect(self.addr)
 		print self.client_sock.recv(self.BUFSIZE)
+		#time.sleep(3)
 		print self.client_sock.recv(self.BUFSIZE)
 		#print "welcome:"+data+"-----end of a command--------"
 	def sendcmd(self,cmd):
@@ -124,14 +126,30 @@ def parsing(raw_cmd):
 	list_cmd = raw_cmd.split()
 	#print list_cmd
 	return list_cmd
+def test():
+	my_ftp = ftp_client('127.0.0.1','1234')
+	my_ftp.login('nano','123')
+	my_ftp.cd('..')
+	my_ftp.get('123')
+	my_ftp.delete('123')
+	my_ftp.put('123')
+def test2():
+	my_ftp = ftp_client('public.sjtu.edu.cn')
+	my_ftp.login('lpshen','public')
+	my_ftp.type('I')
+
 def main():
 	while 1:
 		print "ftp>"
 		raw_cmd = raw_input()
 		list_cmd= parsing(raw_cmd)
 		if list_cmd[0]=='login':
-			my_ftp = ftp_client(list_cmd[1])
-			my_ftp.login(list_cmd[2],list_cmd[3])
+			if len(list_cmd)==4:
+				my_ftp = ftp_client(list_cmd[1])
+				my_ftp.login(list_cmd[2],list_cmd[3])
+			elif len(list_cmd)==5:
+				my_ftp = ftp_client(list_cmd[1],list_cmd[2])
+				my_ftp.login(list_cmd[3],list_cmd[4])
 
 		elif list_cmd[0]=='exit':
 			break;
@@ -176,3 +194,4 @@ def main():
 			print "wrong command"
 if __name__ == '__main__':
 	main()
+	#test()
