@@ -143,6 +143,8 @@ def main():
 		print "ftp>"
 		raw_cmd = raw_input()
 		list_cmd= parsing(raw_cmd)
+		if len(list_cmd) == 0:
+			continue
 		if list_cmd[0]=='login':
 			if len(list_cmd)==4:
 				my_ftp = ftp_client(list_cmd[1])
